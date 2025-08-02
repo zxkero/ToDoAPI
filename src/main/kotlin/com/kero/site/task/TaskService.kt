@@ -20,19 +20,19 @@ class TaskService(private val repository: TaskRepository) {
         return repository.findById(id).orElse(null)
     }
 
-    fun addTask(title: String): Task {
-        val newTask = Task(title = title)
+    fun addTask(title: String, description: String): Task {
+        val newTask = Task(title = title, description = description)
         val savedTask = repository.save(newTask)
         logger.info("Создана новая задача: $savedTask")
         return savedTask
     }
 
-    fun updateTask(id: Int, title: String, isCompleted: Boolean): Task? {
+    fun updateTask(id: Int, title: String, description: String, isCompleted: Boolean): Task? {
         // проверка, существует ли задача
         val existingTask = repository.findById(id).orElse(null) ?: return null
 
         // обновленный объект с тем же ид
-        val updatedTask = existingTask.copy(title = title, isCompleted = isCompleted)
+        val updatedTask = existingTask.copy(title = title, description = description, isCompleted = isCompleted)
 
         // сохранение
         val savedTask = repository.save(updatedTask)

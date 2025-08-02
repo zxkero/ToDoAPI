@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 // DTO для получения данных
-data class CreateTaskDto(val title: String)
+data class CreateTaskDto(val title: String, val description: String)
 
 // DTO для изменения задачи
-data class UpdateTaskDto(val title: String, val isCompleted: Boolean)
+data class UpdateTaskDto(val title: String, val description: String, val isCompleted: Boolean)
 
 @RestController
 @CrossOrigin(origins = ["*"])
@@ -38,7 +38,7 @@ class TaskController(private val taskService: TaskService) {
     // Создание задачи
     @PostMapping("/tasks")
     fun addTask(@RequestBody taskDto: CreateTaskDto): Task {
-        return taskService.addTask(taskDto.title)
+        return taskService.addTask(taskDto.title, taskDto.description)
     }
 
     // Изменение задачи
@@ -47,7 +47,7 @@ class TaskController(private val taskService: TaskService) {
         @PathVariable id: Int,
         @RequestBody taskDto: UpdateTaskDto
     ) : ResponseEntity<Task> {
-        val updatedTask = taskService.updateTask(id, taskDto.title, taskDto.isCompleted)
+        val updatedTask = taskService.updateTask(id, taskDto.title, taskDto.description, taskDto.isCompleted)
 
         return if (updatedTask != null) {
             ResponseEntity.ok(updatedTask)

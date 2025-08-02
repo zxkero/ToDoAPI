@@ -1,6 +1,9 @@
 package com.kero.site.task
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import java.time.LocalDateTime
 
 @Entity
 data class Task(
@@ -9,5 +12,11 @@ data class Task(
     @SequenceGenerator(name = "task_generator", sequenceName = "task_seq", allocationSize = 1)
     var id: Int? = null,
     var title: String = "",
-    var isCompleted: Boolean = false
+    var description: String = "",
+    var isCompleted: Boolean = false,
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    @JsonFormat(pattern = "HH:mm dd.MM.yyyy")
+    var creationTime: LocalDateTime? = null
 )
