@@ -1,6 +1,7 @@
 package com.kero.site.task
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,7 @@ data class CreateTaskDto(val title: String)
 data class UpdateTaskDto(val title: String, val isCompleted: Boolean)
 
 @RestController
+@CrossOrigin(origins = ["*"])
 class TaskController(private val taskService: TaskService) {
 
     // Получение всех задач
