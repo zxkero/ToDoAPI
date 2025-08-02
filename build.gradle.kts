@@ -31,6 +31,8 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.testcontainers:junit-jupiter:1.20.0")
+	testImplementation("org.testcontainers:postgresql:1.20.0")
 }
 
 kotlin {
