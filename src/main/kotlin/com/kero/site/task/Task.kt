@@ -1,3 +1,13 @@
 package com.kero.site.task
 
-data class Task(val id: Int, val title: String, val isCompleted: Boolean = false)
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
+
+@Entity
+data class Task(
+    @Id @GeneratedValue
+    val id: Int = 0,
+    val title: String,
+    val isCompleted: Boolean = false
+)
