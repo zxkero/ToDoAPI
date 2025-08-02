@@ -1,13 +1,13 @@
 package com.kero.site.task
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
 data class Task(
-    @Id @GeneratedValue
-    val id: Int = 0,
-    val title: String,
-    val isCompleted: Boolean = false
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
+    @SequenceGenerator(name = "task_generator", sequenceName = "task_seq", allocationSize = 1)
+    var id: Int? = null,
+    var title: String = "",
+    var isCompleted: Boolean = false
 )

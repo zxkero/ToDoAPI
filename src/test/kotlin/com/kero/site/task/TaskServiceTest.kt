@@ -1,124 +1,95 @@
 package com.kero.site.task
 
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class TaskServiceTest {
 
-    @Test
-    fun `addTask should create and return a new task`() {
-        // 1. Arrange (Подготовка)
-        val taskService = TaskService() // Реальный экземпляр
-        val taskTitle = "Изучить юнит-тесты"
+    private lateinit var taskRepository: TaskRepository
+    private lateinit var taskService: TaskService
 
-        // 2. Act (Действие)
-        val createdTask = taskService.addTask(taskTitle)
-
-        // 3. Assert (Проверка)
-        assertNotNull(createdTask) // Проверяем, что задача не null
-        assertEquals(1, createdTask.id) // Проврека, что ид первой задачи равен 1
-        assertEquals(taskTitle, createdTask.title) // Проверка, что название совпадает
-        assertFalse(createdTask.isCompleted) // Проверка, что задача не выполнена сразу
+    @BeforeEach
+    fun setUp() {
+        taskRepository = mockk(relaxed = true)
+        taskService = TaskService(taskRepository)
     }
 
     @Test
-    fun `addTask should add a new task to the list`() {
-        val taskService = TaskService()
+    fun `addTask should save and return a new task`() {
+        // Arrange
+        val taskTitle = "Изучить MockK"
+        val expectedSavedTask = Task(id = 1, title = taskTitle, isCompleted = false)
+        every { taskRepository.save(any()) } returns expectedSavedTask
 
-        val task1 = taskService.addTask("Test Task")
+        // Act
+        val result = taskService.addTask(taskTitle)
 
-        assertNotNull(taskService.getAllTasks())
-        assertEquals(1, taskService.getAllTasks().size)
-        assertEquals("Test Task", taskService.getAllTasks()[0].title)
-
+        // Assert
+        assertEquals(expectedSavedTask, result)
+        verify { taskRepository.save(any<Task>()) }
     }
 
     @Test
     fun `updateTask should change task details if task exists`() {
-        val taskService = TaskService()
-        val originalTask = taskService.addTask("Старое название")
+        // Arrange
+        val taskId = 1
+        val originalTask = Task(id = taskId, title = "Старое название", isCompleted = false)
+        val expectedUpdatedTask = Task(id = taskId, title = "Новое название", isCompleted = true)
 
-        val newTitle = "Новое название"
-        val newStatus = true
+        every { taskRepository.findById(taskId) } returns Optional.of(originalTask)
+        every { taskRepository.save(any()) } returns expectedUpdatedTask
 
-        val updatedTask = taskService.updateTask(originalTask.id, newTitle, newStatus)
+        // Act
+        val result = taskService.updateTask(taskId, "Новое название", true)
 
-        assertNotNull(updatedTask)
-        assertEquals(newTitle, updatedTask?.title)
-        assertEquals(newStatus, updatedTask?.isCompleted)
-
-        val taskFromService = taskService.getTaskById(originalTask.id)
-        assertEquals(newTitle, taskFromService?.title)
-        assertEquals(newStatus, taskFromService?.isCompleted)
+        // Assert
+        assertEquals(expectedUpdatedTask, result)
     }
 
     @Test
     fun `updateTask should return null if task does not exist`() {
-        val taskService = TaskService()
+        // Arrange
+        val nonExistentId = 999
+        every { taskRepository.findById(nonExistentId) } returns Optional.empty()
 
-        val tryUpdate = taskService.updateTask(999, "Обновленная задача", true)
-        assertNull(tryUpdate)
-    }
+        // Act
+        val result = taskService.updateTask(nonExistentId, "Что-то", true)
 
-
-    @Test
-    fun `getTaskById should return task if it exists`() {
-        val taskService = TaskService()
-        val task1 = taskService.addTask("Сварить кашу")
-        val expectedTask = taskService.addTask("Купить колбасу")
-        val notExistentId = 999
-
-        val foundTask = taskService.getTaskById(expectedTask.id)
-        val notFoundTask = taskService.getTaskById(notExistentId)
-
-        assertNotNull(foundTask)
-        assertEquals(expectedTask, foundTask)
-        assertNull(notFoundTask)
+        // Assert
+        assertNull(result)
+        verify(exactly = 0) { taskRepository.save(any()) }
     }
 
     @Test
-    fun `getAllTasks should return all tasks if it exists`() {
-        val taskService = TaskService()
-        val task1 = taskService.addTask("Задача 1")
-        val task2 = taskService.addTask("Задача 2")
+    fun `deleteTask should return true if task exists`() {
+        // Arrange
+        val taskId = 1
+        every { taskRepository.existsById(taskId) } returns true
 
-        val res = taskService.getAllTasks()
+        // Act
+        val result = taskService.deleteTask(taskId)
 
-        assertNotNull(res)
-        assertEquals(2, res.size)
-    }
-
-    @Test
-    fun `getAllTasks should return an empty list when no tasks have been added`() {
-        val taskService = TaskService()
-
-        val res = taskService.getAllTasks()
-
-        assertNotNull(res)
-        assertTrue(res.isEmpty())
-    }
-
-    @Test
-    fun `deleteTask should remove task if it exists`() {
-        val taskService = TaskService()
-        val task1 = taskService.addTask("zero task")
-
-        val wasDeleted = taskService.deleteTask(task1.id)
-        val resultAfterDeletion = taskService.getTaskById(task1.id)
-
-        assertTrue(wasDeleted)
-        assertNull(resultAfterDeletion)
+        // Assert
+        assertTrue(result)
+        verify { taskRepository.deleteById(taskId) }
     }
 
     @Test
     fun `deleteTask should return false if task does not exist`() {
-        val taskService = TaskService()
-        val notExistentId = 999
+        // Arrange
+        val nonExistentId = 999
+        every { taskRepository.existsById(nonExistentId) } returns false
 
-        val res = taskService.deleteTask(notExistentId)
+        // Act
+        val result = taskService.deleteTask(nonExistentId)
 
-        assertFalse(res)
+        // Assert
+        assertFalse(result)
+        verify(exactly = 0) { taskRepository.deleteById(any()) }
     }
-
-
 }

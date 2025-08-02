@@ -29,6 +29,8 @@ dependencies {
 	testImplementation("io.mockk:mockk:1.13.17")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
+	implementation("org.flywaydb:flyway-database-postgresql")
+	runtimeOnly("org.postgresql:postgresql")
 }
 
 kotlin {
