@@ -2,21 +2,43 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Список Задач (ToDo List)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Мои задачи</h1>
+    <header>
+        <h1>Мои задачи</h1>
+    </header>
 
-    <div class="add-task-form">
-        <input type="text" id="task-input" placeholder="Введите новую задачу...">
-        <button id="add-task-button">Добавить</button>
-    </div>
+    <main>
+        <div class="add-task-form">
+            <div class="form-fields">
+                <div class="input-group">
+                    <input type="text" id="task-title-input" placeholder=" " required>
+                    <label for="task-title-input">Название задачи</label>
+                </div>
+                <div class="input-group">
+                    <textarea id="task-description-input" placeholder=" " rows="3"></textarea>
+                    <label for="task-description-input">Описание</label>
+                </div>
+            </div>
+            <button id="add-task-button" class="fab" aria-label="Добавить задачу">
+                <span class="material-symbols-outlined">add</span>
+            </button>
+        </div>
 
-    <ul id="task-list">
-    </ul>
+        <ul id="task-list">
+        </ul>
+    </main>
 </div>
 
 <script src="script.js"></script>

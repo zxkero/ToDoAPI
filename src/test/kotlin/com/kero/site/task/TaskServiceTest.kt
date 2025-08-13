@@ -23,11 +23,12 @@ class TaskServiceTest {
     fun `addTask should save and return a new task`() {
         // Arrange
         val taskTitle = "Изучить MockK"
-        val expectedSavedTask = Task(id = 1, title = taskTitle, isCompleted = false)
+        val taskDescription = "Описание для MockK"
+        val expectedSavedTask = Task(id = 1, title = taskTitle, description = taskDescription, isCompleted = false)
         every { taskRepository.save(any()) } returns expectedSavedTask
 
         // Act
-        val result = taskService.addTask(taskTitle)
+        val result = taskService.addTask(taskTitle, taskDescription)
 
         // Assert
         assertEquals(expectedSavedTask, result)
@@ -38,14 +39,14 @@ class TaskServiceTest {
     fun `updateTask should change task details if task exists`() {
         // Arrange
         val taskId = 1
-        val originalTask = Task(id = taskId, title = "Старое название", isCompleted = false)
-        val expectedUpdatedTask = Task(id = taskId, title = "Новое название", isCompleted = true)
+        val originalTask = Task(id = taskId, title = "Старое название", description = "Старое описание", isCompleted = false)
+        val expectedUpdatedTask = Task(id = taskId, title = "Новое название", description = "Новое описание", isCompleted = true)
 
         every { taskRepository.findById(taskId) } returns Optional.of(originalTask)
         every { taskRepository.save(any()) } returns expectedUpdatedTask
 
         // Act
-        val result = taskService.updateTask(taskId, "Новое название", true)
+        val result = taskService.updateTask(taskId, "Новое название", "Новое описание", true)
 
         // Assert
         assertEquals(expectedUpdatedTask, result)
@@ -58,7 +59,7 @@ class TaskServiceTest {
         every { taskRepository.findById(nonExistentId) } returns Optional.empty()
 
         // Act
-        val result = taskService.updateTask(nonExistentId, "Что-то", true)
+        val result = taskService.updateTask(nonExistentId, "Что-то", "Что-то еще", true)
 
         // Assert
         assertNull(result)
