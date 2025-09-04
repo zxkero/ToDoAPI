@@ -16,6 +16,9 @@ data class CreateTaskDto(val title: String, val description: String)
 // DTO для изменения задачи
 data class UpdateTaskDto(val title: String, val description: String, val isCompleted: Boolean)
 
+// DTO для получения задачи
+
+
 @RestController
 @CrossOrigin(origins = ["*"])
 class TaskController(private val taskService: TaskService) {
